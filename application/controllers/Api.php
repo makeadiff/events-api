@@ -1,5 +1,4 @@
 <?php
-
 defined('BASEPATH') OR exit('No direct script access allowed');
 /** 
  * Prints a array, an object or a scalar variable in an easy to view format.
@@ -31,7 +30,6 @@ function dump() {
 
 
 class Api extends CI_Controller {
-
 	/**
 	 * CodeIgniter
 	 * @package         MAD App
