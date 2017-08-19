@@ -1,4 +1,22 @@
 <?php
+$_REQUEST['id'] = '["ch-VYoy5HK0:APA91bEI_xT7fbHCXiAT4iss3UCuyP4ZOkoOS_xaLLQfv3EDW1xUqLyAJ22vYMQcF1LEbpZhoFWG-OUsjxWRzq58ywLs_Ck0shiSmaROB99cSqlRPyJoYmb3d5qwXta3GaZj9IHVe7sz"]';
+$_REQUEST['msg'] = '"status": 1,
+"title": "Event has been cancelled",
+"type": 3,
+"event_id": 1998,
+"event_name": "Testing New",
+"event_details": "New Details",
+"event_date": "02-August-2017",
+"event_location": "New Location",
+"latitude": 3,
+"longitude": 4,
+"event_city": 28,
+"event_time": "05:30 AM",
+"user_choice": 1,
+"event_going_count": 1,
+"event_invited_count": 5,
+"event_maybe_count": 0,
+"event_cantgo_count": 0}';
 $registation_ids = json_decode($_REQUEST['id']);
 $message = json_decode($_REQUEST['msg'], true);
 if(!empty($registation_ids)) {
@@ -33,3 +51,52 @@ if(!empty($registation_ids)) {
 }
 
 dump($data, $result);
+/*
+dump($result, $data, $registration_ids, $message);
+{"status":"1"}
+<pre>-------------------------------------------------------------------------------------------------------------------
+</pre>=========&gt;string(143) "{"multicast_id":5529898243055371907,"success":1,"failure":0,"canonical_ids":0,"results":[{"message_id":"0:1503124153109611%e6606c70f9fd7ecd"}]}"
+&lt;=========
+<pre>
+stdClass::__set_state(array(
+   'multicast_id' => 5529898243055371907,
+   'success' => 1,
+   'failure' => 0,
+   'canonical_ids' => 0,
+   'results' => 
+  array (
+    0 => 
+    stdClass::__set_state(array(
+       'message_id' => '0:1503124153109611%e6606c70f9fd7ecd',
+    )),
+  ),
+))=======================================================
+Array
+(
+    [0] => cxmrLje1_q8:APA91bHcqQfz9m9ok9HgIm4YvdXL7JtmVWCKmrMYStbpkq8oGnXIDpsIieJOCZOoa_pqWDjRpDw53gtstpeAj_9i_-jnC0gu8J9ek5dc_zbpS8qH5a1KvNC-v_ZOXwNXj3BeAQRvIMqJ
+)
+=======================================================
+Array
+(
+    [status] => 1
+    [title] => Event has been cancelled
+    [type] => 3
+    [event_id] => 1998
+    [event_name] => Testing New
+    [event_details] => New Details
+    [event_date] => 02-August-2017
+    [event_location] => New Location
+    [event_type] => 
+    [latitude] => 3
+    [longitude] => 4
+    [event_city] => 28
+    [event_time] => 05:30 AM
+    [user_choice] => 1
+    [event_going_count] => 1
+    [event_invited_count] => 5
+    [event_maybe_count] => 0
+    [event_cantgo_count] => 0
+)
+=======================================================
+-------------------------------------------------------------------------------------------------------------------</pre>
+*/

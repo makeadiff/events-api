@@ -1852,7 +1852,7 @@ class Api extends CI_Controller {
 			// let's check the response
 			$data = json_decode($result);
 			
-			dump($result, $data, $registration_ids, $message);
+			// dump($result, $data, $registration_ids, $message);
 		}
 
 		return $data;
