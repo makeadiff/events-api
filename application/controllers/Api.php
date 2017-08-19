@@ -1855,7 +1855,7 @@ class Api extends CI_Controller {
 		}
 
 		$log_file = '/home/makeadiff/public_html/apps/events-api/v1/log/api.log';
-		$line = date("Y-m-d H:i:s") . ": " . $data . " - $message[title]\n";
+		$line = date("Y-m-d H:i:s") . ": " . $result . " - $message[title]\n";
 		file_put_contents($log_file, $line, FILE_APPEND);
 
 		return $data;
