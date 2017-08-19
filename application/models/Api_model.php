@@ -32,20 +32,14 @@ class Api_model extends CI_Model {
     public function login_data($data) {
         #$username = $this->db->escape($data['email_id']);
         $username = $data['email_id'];
-        $this->db->select('UR.id,
-                                    UR.title,
-                                    UR.name,
-                                    UR.email,
-                                    UR.phone,
-                                    UR.password,
-                                    UR.city_id,
-                                    GROUP_CONCAT(",", G.type) AS group_type', TRUE);
+        $this->db->select('UR.id, UR.title, UR.name, UR.email, UR.phone, UR.password, UR.city_id, GROUP_CONCAT(",", G.type) AS group_type', TRUE);
         $this->db->from('User AS UR');
         $this->db->join('UserGroup AS UG', 'UR.id=UG.user_id');
         $this->db->join('`Group` AS G', 'UG.group_id=G.id');
-        $this->db->where("UR.email", $username);
+        $this->db->where("(UR.email", $username, FALSE);
+        $this->db->or_where("UR.mad_email='$username')", NULL, FALSE);
         $this->db->where("UR.status", ACTIVEUSER);
-        print $this->db->last_query();
+        // print $this->db->last_query();
         $query = $this->db->get();
         # echo $this->db->last_query();
         if ($query->num_rows() > 0) {

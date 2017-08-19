@@ -1466,6 +1466,7 @@ class Api extends CI_Controller {
 			$this->api_validation->api_data_validation($data['user_id'], array('required'));
 			$this->api_validation->api_data_validation($data['city_id'], array('required'));
 			$validation = $this->api_validation->run();
+			
 			if ($validation == VALIDATION_FAILED) {
 				$results = array('status' => VALIDATION_FAILED,'user_array'=>$res_array);
 				echo json_encode($results);
@@ -1473,9 +1474,9 @@ class Api extends CI_Controller {
 				if ((isset($data['user_id']) && !empty($data['user_id']))) {
 					$joins = array();
 					if(isset($data['center_id'])&& !empty($data['center_id'])){
-						 $where = array('center_id'=>$data['center_id'],'city_id'=>$data['city_id'],'id !='=>$data['user_id']);
+						 $where = array('center_id'=>$data['center_id'],'city_id'=>$data['city_id'],'id !='=>$data['user_id'], 'status' => 1, 'user_type' => 'volunteer');
 					} else {
-						$where = array('city_id'=>$data['city_id'],'id !='=>$data['user_id']); 
+						$where = array('city_id'=>$data['city_id'],'id !='=>$data['user_id'], 'status' => 1, 'user_type' => 'volunteer'); 
 					}
 					$event_user_det=array();
 					$invite_arr=array();
