@@ -1,6 +1,6 @@
 <?php
-$_REQUEST['id'] = '["ch-VYoy5HK0:APA91bEI_xT7fbHCXiAT4iss3UCuyP4ZOkoOS_xaLLQfv3EDW1xUqLyAJ22vYMQcF1LEbpZhoFWG-OUsjxWRzq58ywLs_Ck0shiSmaROB99cSqlRPyJoYmb3d5qwXta3GaZj9IHVe7sz"]';
-$_REQUEST['msg'] = '"status": 1,
+$_REQUEST['id'] = '["cxmrLje1_q8:APA91bHcqQfz9m9ok9HgIm4YvdXL7JtmVWCKmrMYStbpkq8oGnXIDpsIieJOCZOoa_pqWDjRpDw53gtstpeAj_9i_-jnC0gu8J9ek5dc_zbpS8qH5a1KvNC-v_ZOXwNXj3BeAQRvIMqJ"]';
+$_REQUEST['msg'] = '{"status": 1,
 "title": "Event has been cancelled",
 "type": 3,
 "event_id": 1998,

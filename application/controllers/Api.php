@@ -1829,8 +1829,7 @@ class Api extends CI_Controller {
 				'registration_ids' => $registration_ids,
 				'data' => $message,
 			);
-			// print_r($registatoin_ids_fcm);
-			// echo "<br><br>";
+
 			// Update your Google Cloud Messaging API Key
 			// define("GOOGLE_API_KEY2", "AIzaSyCOsIxjMPfzN-X4b4HInmNTc3qBUp9jam8"); 
 			define("GOOGLE_API_KEY2", "AAAA_jcFElg:APA91bHvMq8w7zoDafvLpYjSY2iAcF8ufDoOtAa5xuQrOxi7budFa7z2N6Jzv0b_5SOw7DMtZbXb1OScvMt49sUFV9UBvSasoWSjttFl2tCr8tqHj65y0LCjQwDwKaRYLhEMdrL6BIdM"); 
@@ -1854,6 +1853,10 @@ class Api extends CI_Controller {
 			
 			// dump($result, $data, $registration_ids, $message);
 		}
+
+		$log_file = '/home/makeadiff/public_html/apps/events-api/v1/log/api.log';
+		$line = date("Y-m-d H:i:s") . ": " . $data . " - $message[title]\n";
+		file_put_contents($log_file, $line, FILE_APPEND);
 
 		return $data;
 	}
