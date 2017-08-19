@@ -141,23 +141,21 @@ class Api extends CI_Controller {
 							$dbstatus = $this->check_app_ws_db($data, $user_cnt, $city_cnt, $vertical_cnt, $center_cnt,$event_type_cnt);
 							
 							$check_imei = $this->Api_model->count_detail('Push_Notification', array('status' => ACTIVE,'user_id' =>$id ,'imei_no'=>$data['imei_number'])); # Checking imei number and user id in push notification table
-							if(isset($check_imei) && $check_imei > 0)
-							{
-							  $hash_key = $this->device_validation->key_generator($data['imei_number']);
-							  $update_array = array('hash_key' => $hash_key,'fcm_regid'=>$data['fcm_regid']);
-							  $keyvalue=$this->Api_model->update("Push_Notification", $update_array, array('imei_no'=>$data['imei_number'],'user_id' =>$id));
-							  
-							}else
-							{
-							  $this->Api_model->update("Push_Notification", array('status' => INACTIVE), array('imei_no'=>$data['imei_number']));
-							  $hash_key = $this->device_validation->key_generator($data['imei_number']);
-							  $update_array1 = array('hash_key' => $hash_key,
+							if(isset($check_imei) && $check_imei > 0) {
+								$hash_key = $this->device_validation->key_generator($data['imei_number']);
+								$update_array = array('hash_key' => $hash_key,'fcm_regid'=>$data['fcm_regid']);
+								$keyvalue=$this->Api_model->update("Push_Notification", $update_array, array('imei_no'=>$data['imei_number'],'user_id' =>$id));
+								
+							} else {
+								$this->Api_model->update("Push_Notification", array('status' => INACTIVE), array('imei_no'=>$data['imei_number']));
+								$hash_key = $this->device_validation->key_generator($data['imei_number']);
+								$update_array1 = array('hash_key' => $hash_key,
 								'user_id'=>$id,'imei_no'=>$data['imei_number'],
 								'status'=>ACTIVE,
 								'fcm_regid'=>$data['fcm_regid'],
 								'created_on'=>$this->device_validation->get_cur_date_time(),
 								);
-							  $keyvalue=$this->Api_model->save_data('Push_Notification',$update_array1);
+								$keyvalue=$this->Api_model->save_data('Push_Notification',$update_array1);
 							}
 							$this->Api_model->update('User',array('app_version'=>$data['latest_app_version']),array('id'=>$id)); // update appversion number
 							//$hash_key = $this->device_validation->key_generator($data['imei_number']);
@@ -333,8 +331,7 @@ class Api extends CI_Controller {
 							array('table' => 'Event AS ET',
 								'condition' => 'ET.id=UE.event_id AND ET.created_by_user_id != '.$data['user_id'],
 								'jointype' => ''
-							)
-						);
+							));
 						
 						$event_det = $this->Api_model->get_data('UserEvent AS UE', 'ET.id AS event_id,ET.name,ET.description,ET.event_type_id,ET.starts_on,ET.city_id,ET.latitude,ET.longitude,ET.city_id,ET.place,UE.user_choice', array('UE.user_id' => $data['user_id'],'UE.created_from' => APP, 'ET.status' => ACTIVE,'ET.starts_on >=' => $today_midnit), TRUE, 'ET.starts_on asc', $joins,$limit);
 						// print $this->Api_model->db->last_query();
@@ -374,31 +371,40 @@ class Api extends CI_Controller {
 							die;
 						} else {
 							//$results = array('status' => FAILURE, 'event_id' => "", 'event_name' => "", 'event_details' => "", 'event_date' => "", 'event_location' => "", 'event_type' => "", 'latitude' => "", 'longitude' => "", 'event_city' => "", 'event_going_count' => "", 'event_invited_count' => "", 'event_maybe_count' => "");
-							$results = array('status' => SUCCESS,'events_array'=>array() ,'cities' => $dbstatus['city_det'], 'verticals' => $dbstatus['vertical_det'], 'centers' => $dbstatus['center_det'], 'members' => $dbstatus['user_det'],'event_types'=>$dbstatus['event_type_det']);
+							$results = array('status' => SUCCESS,'events_array'=>array() ,'cities' => $dbstatus['city_det'], 'verticals' => $dbstatus['vertical_det'], 
+												'centers' => $dbstatus['center_det'], 'members' => $dbstatus['user_det'],'event_types'=>$dbstatus['event_type_det']);
 							echo json_encode($results);
 							die;
 						}
 					} else if ($data['event_category'] == POSTED_EVENT) {
-					  $event_det=array();
-					  $upcoming_event=array();
-					  $past_event=array();
-					  $upcoming_event = $this->Api_model->get_data('Event', 'Event.id AS event_id,Event.name,Event.description,Event.starts_on,Event.city_id,Event.latitude,Event.longitude,Event.city_id,Event.place,event_type_id', array('Event.created_by_user_id' => $data['user_id'],'Event.created_from' => APP, 'Event.status' => ACTIVE,'starts_on >='=>$this->device_validation->get_cur_date_time(TRUE,TRUE)), TRUE, 'starts_on asc',array(),$limit);
-					  $past_event = $this->Api_model->get_data('Event', 'Event.id AS event_id,Event.name,Event.description,Event.starts_on,Event.city_id,Event.latitude,Event.longitude,Event.city_id,Event.place,event_type_id', array('Event.created_by_user_id' => $data['user_id'],'Event.created_from' => APP, 'Event.status' => ACTIVE,'starts_on <'=>$this->device_validation->get_cur_date_time(TRUE,TRUE)), TRUE, 'starts_on desc',array(),$limit);
+						$event_det=array();
+						$upcoming_event=array();
+						$past_event=array();
+						$upcoming_event = $this->Api_model->get_data('Event', 'Event.id AS event_id,Event.name,Event.description,Event.starts_on,Event.city_id,Event.latitude,Event.longitude,Event.city_id,Event.place,event_type_id', 
+							array('Event.created_by_user_id' => $data['user_id'],'Event.created_from' => APP, 'Event.status' => ACTIVE,
+								'starts_on >='=>$this->device_validation->get_cur_date_time(TRUE,TRUE)), TRUE, 'starts_on asc',array(),$limit);
+						$past_event = $this->Api_model->get_data('Event', 'Event.id AS event_id,Event.name,Event.description,Event.starts_on,Event.city_id,Event.latitude,Event.longitude,Event.city_id,Event.place,event_type_id', 
+							array('Event.created_by_user_id' => $data['user_id'],'Event.created_from' => APP, 'Event.status' => ACTIVE,
+								'starts_on <'=>$this->device_validation->get_cur_date_time(TRUE,TRUE)), TRUE, 'starts_on desc',array(),$limit);
 					  // print $this->Api_model->db->last_query();
 					 // $event_det = $this->Api_model->get_data('Event', 'Event.id AS event_id,Event.name,Event.description,Event.starts_on,Event.city_id,Event.latitude,Event.longitude,Event.city_id,Event.place,event_type_id', array('Event.created_by_user_id' => $data['user_id'],'Event.created_from' => APP, 'Event.status' => ACTIVE), TRUE, 'starts_on desc',array(),$limit);
-					  if(isset($upcoming_event) && !empty($upcoming_event) && isset($past_event) && !empty($past_event)){
-						  $event_det = array_merge($upcoming_event, $past_event);
+						if(isset($upcoming_event) && !empty($upcoming_event) && isset($past_event) && !empty($past_event)){
+						    $event_det = array_merge($upcoming_event, $past_event);
 						} else if(isset($past_event) && !empty($past_event)) {
-						  $event_det = $this->Api_model->get_data('Event', 'Event.id AS event_id,Event.name,Event.description,Event.starts_on,Event.city_id,Event.latitude,Event.longitude,Event.city_id,Event.place,event_type_id', array('Event.created_by_user_id' => $data['user_id'],'Event.created_from' => APP, 'Event.status' => ACTIVE,'starts_on <'=>$this->device_validation->get_cur_date_time(TRUE,TRUE)), TRUE, 'starts_on desc',array(),$limit);
+						    $event_det = $this->Api_model->get_data('Event', 'Event.id AS event_id,Event.name,Event.description,Event.starts_on,Event.city_id,Event.latitude,Event.longitude,Event.city_id,Event.place,event_type_id', 
+						  		array('Event.created_by_user_id' => $data['user_id'],'Event.created_from' => APP, 'Event.status' => ACTIVE,
+						  		'starts_on <'=>$this->device_validation->get_cur_date_time(TRUE,TRUE)), TRUE, 'starts_on desc',array(),$limit);
 						} else {
-						   $event_det = $this->Api_model->get_data('Event', 'Event.id AS event_id,Event.name,Event.description,Event.starts_on,Event.city_id,Event.latitude,Event.longitude,Event.city_id,Event.place,event_type_id', array('Event.created_by_user_id' => $data['user_id'],'Event.created_from' => APP, 'Event.status' => ACTIVE,'starts_on >='=>$this->device_validation->get_cur_date_time(TRUE,TRUE)), TRUE, 'starts_on asc',array(),$limit);
+						    $event_det = $this->Api_model->get_data('Event', 'Event.id AS event_id,Event.name,Event.description,Event.starts_on,Event.city_id,Event.latitude,Event.longitude,Event.city_id,Event.place,event_type_id', 
+						   			array('Event.created_by_user_id' => $data['user_id'],'Event.created_from' => APP, 'Event.status' => ACTIVE,
+						   			'starts_on >='=>$this->device_validation->get_cur_date_time(TRUE,TRUE)), TRUE, 'starts_on asc',array(),$limit);
 						}
 
-					  if (isset($event_det) && !empty($event_det)) {
+						if (isset($event_det) && !empty($event_det)) {
 							$res_array = '';
 							$event_arr=array();
 							foreach ($event_det as $ed) {
-							   $event_id = $ed->event_id;
+							    $event_id = $ed->event_id;
 								$event_name = $ed->name;
 								$event_details = $ed->description;
 								$event_location = $ed->place;
@@ -413,7 +419,7 @@ class Api extends CI_Controller {
 								if(isset($event_arr) && !empty($event_arr)){
 									$user_choice = $event_arr->user_choice;
 								} else {
-								  $user_choice = DEFAULT_STATUS; // user not choosing rsvp, status will be 0
+								    $user_choice = DEFAULT_STATUS; // user not choosing rsvp, status will be 0
 								}
 								
 							   $eventdate=date("Y-m-d H:i:s", strtotime($ed->starts_on));
@@ -421,25 +427,25 @@ class Api extends CI_Controller {
 							   
 								if($eventdate >= $current_date)
 								{
-									 $user_go_cnt = $this->Api_model->count_detail('UserEvent', array('event_id' => $event_id, 'user_choice' => GO));
-									 $invited_user = $this->Api_model->count_detail('UserEvent', array('event_id' => $event_id));
-									 $user_may_go_cnt = $this->Api_model->count_detail('UserEvent', array('event_id' => $event_id, 'user_choice' => MYBEGO));
-									 $user_cantgo_cnt = $this->Api_model->count_detail('UserEvent', array('event_id' => $event_id, 'user_choice' => CANTGO));
-									 $results_1 = array('event_id' => $event_id, 'event_name' => $event_name, 'event_details' => $event_details, 'event_date' => $event_date, 'event_location' => $event_location, 'event_type' => $event_type, 'latitude' => $latitude, 'longitude' => $longitude, 'event_city' => $city_id, 'event_going_count' => $user_go_cnt, 'event_invited_count' => $invited_user, 'event_maybe_count' => $user_may_go_cnt,'event_time'=>$event_time,'user_choice'=>$user_choice,'event_cantgo_count' => $user_cantgo_cnt);
+									$user_go_cnt = $this->Api_model->count_detail('UserEvent', array('event_id' => $event_id, 'user_choice' => GO));
+									$invited_user = $this->Api_model->count_detail('UserEvent', array('event_id' => $event_id));
+									$user_may_go_cnt = $this->Api_model->count_detail('UserEvent', array('event_id' => $event_id, 'user_choice' => MYBEGO));
+									$user_cantgo_cnt = $this->Api_model->count_detail('UserEvent', array('event_id' => $event_id, 'user_choice' => CANTGO));
+									$results_1 = array('event_id' => $event_id, 'event_name' => $event_name, 'event_details' => $event_details, 'event_date' => $event_date, 'event_location' => $event_location, 'event_type' => $event_type, 'latitude' => $latitude, 'longitude' => $longitude, 'event_city' => $city_id, 'event_going_count' => $user_go_cnt, 'event_invited_count' => $invited_user, 'event_maybe_count' => $user_may_go_cnt,'event_time'=>$event_time,'user_choice'=>$user_choice,'event_cantgo_count' => $user_cantgo_cnt);
 							   
-								}else{ 
-									 $attended = $this->Api_model->count_detail('UserEvent', array('event_id' => $event_id, 'present' => ACTIVE,'late'=>INACTIVE));
-									 $late = $this->Api_model->count_detail('UserEvent', array('event_id' => $event_id,'present' => ACTIVE,'late'=>ACTIVE));
-									 $missed = $this->Api_model->count_detail('UserEvent', array('event_id' => $event_id, 'present' => MISSED,'late'=>DEFAULT_STATUS));
-									 $user_cantgo_cnt=0;
-									 $results_1 = array('event_id' => $event_id, 'event_name' => $event_name, 'event_details' => $event_details, 'event_date' => $event_date, 'event_location' => $event_location, 'event_type' => $event_type, 'latitude' => $latitude, 'longitude' => $longitude, 'event_city' => $city_id, 'event_going_count' => $attended, 'event_invited_count' => $missed, 'event_maybe_count' => $late,'event_time'=>$event_time,'user_choice'=>$user_choice,'event_cantgo_count' => $user_cantgo_cnt);
+								} else { 
+									$attended = $this->Api_model->count_detail('UserEvent', array('event_id' => $event_id, 'present' => ACTIVE,'late'=>INACTIVE));
+									$late = $this->Api_model->count_detail('UserEvent', array('event_id' => $event_id,'present' => ACTIVE,'late'=>ACTIVE));
+									$missed = $this->Api_model->count_detail('UserEvent', array('event_id' => $event_id, 'present' => MISSED,'late'=>DEFAULT_STATUS));
+									$user_cantgo_cnt=0;
+									$results_1 = array('event_id' => $event_id, 'event_name' => $event_name, 'event_details' => $event_details, 'event_date' => $event_date, 'event_location' => $event_location, 'event_type' => $event_type, 'latitude' => $latitude, 'longitude' => $longitude, 'event_city' => $city_id, 'event_going_count' => $attended, 'event_invited_count' => $missed, 'event_maybe_count' => $late,'event_time'=>$event_time,'user_choice'=>$user_choice,'event_cantgo_count' => $user_cantgo_cnt);
 								}
 								$res_array[] = $results_1;
 							}
 							$results = array('status' => SUCCESS,'events_array'=>$res_array, 'cities' => $dbstatus['city_det'], 'verticals' => $dbstatus['vertical_det'], 'centers' => $dbstatus['center_det'], 'members' => $dbstatus['user_det'],'event_types'=>$dbstatus['event_type_det']);
 							echo json_encode($results);
 							die;
-						}else{
+						} else {
 							//$results = array('status' => FAILURE, 'event_id' => "", 'event_name' => "", 'event_details' => "", 'event_date' => "", 'event_location' => "", 'event_type' => "", 'latitude' => "", 'longitude' => "", 'event_city' => "", 'event_going_count' => "", 'event_invited_count' => "", 'event_maybe_count' => "");
 							 $results = array('status' => SUCCESS,'events_array'=>array(),  'cities' => $dbstatus['city_det'], 'verticals' => $dbstatus['vertical_det'], 'centers' => $dbstatus['center_det'], 'members' => $dbstatus['user_det'],'event_types'=>$dbstatus['event_type_det']);
 							 echo json_encode($results);
@@ -567,13 +573,13 @@ class Api extends CI_Controller {
 						$user_cantgo_cnt = $this->Api_model->count_detail('UserEvent', array('event_id' => $data['event_id'], 'user_choice' => CANTGO));
 						$event_arr = $this->Api_model->get_datum('UserEvent', 'id,user_choice', array('user_id' => $data['user_id'],'event_id'=>$data['event_id']), TRUE, 'id asc');
 						if(isset($event_arr) && !empty($event_arr)){
-								$user_choice = $event_arr->user_choice;
-						}else
-						{
-								$user_choice = DEFAULT_STATUS; // user not choosing rsvp, status will be 0
+							$user_choice = $event_arr->user_choice;
+						} else {
+							$user_choice = DEFAULT_STATUS; // user not choosing rsvp, status will be 0
 						}
 						
-						$results = array('status' => SUCCESS,'event_going_count' => $user_go_cnt, 'event_invited_count' => $invited_user, 'event_maybe_count' => $user_may_go_cnt,'user_choice'=>$user_choice,'event_cantgo_count' => $user_cantgo_cnt);
+						$results = array('status' => SUCCESS,'event_going_count' => $user_go_cnt, 'event_invited_count' => $invited_user, 'event_maybe_count' => $user_may_go_cnt,
+											'user_choice'=>$user_choice,'event_cantgo_count' => $user_cantgo_cnt);
 						echo json_encode($results);
 						die;
 					} else {
@@ -683,9 +689,8 @@ class Api extends CI_Controller {
 							$event_arr = $this->Api_model->get_datum('UserEvent', 'id,user_choice', array('user_id' => $data['user_id'],'event_id'=>$data['event_id']), TRUE, 'id asc');
 							if(isset($event_arr) && !empty($event_arr)){
 								$user_choice = $event_arr->user_choice;
-							}else
-							{
-							  $user_choice = DEFAULT_STATUS; // user not choosing rsvp, status will be 0
+							} else {
+							    $user_choice = DEFAULT_STATUS; // user not choosing rsvp, status will be 0
 							}
 
 							$results = array('user_choice'=>$user_choice,'event_going_count' => $user_go_cnt, 'event_invited_count' => $invited_user, 'event_maybe_count' => $user_may_go_cnt,'status' => SUCCESS,'event_id' => $data['event_id'], 'event_name' => $data['event_name'], 'event_details' => $data['description'], 'event_date' => $data['date'], 'event_location' => $data['location'], 'event_type' => $data['type'], 'latitude' => $data['latitude'], 'longitude' => $data['longitude'], 'event_city' => $data['event_city'],'event_time'=>$data['time'],'event_cantgo_count' => $user_cantgo_cnt);
@@ -712,48 +717,46 @@ class Api extends CI_Controller {
 									array('UserEvent.event_id' => $data['event_id'],'UserEvent.user_id != '=>$data['user_id']), TRUE, 'UserEvent.id asc',$joins);
 
 							if($data['notification_status'] == ON && isset($get_users) && !empty($get_users)){ // checking notification status on or off
-								  $registatoin_ids=array();
-								  $msg_content='';
-								  if(isset($dat['f_event_name']) && $dat['f_event_name']==1){
+								$registatoin_ids=array();
+								$msg_content='';
+								if(isset($dat['f_event_name']) && $dat['f_event_name']==1){
 									$msg_content.='Name : '.$data['event_name'].'<br/>';
-								  }
-								  if(isset($dat['f_event_details']) && $dat['f_event_details']==1){
+								}
+								if(isset($dat['f_event_details']) && $dat['f_event_details']==1){
 									$msg_content.='Details : '.$data['description'].'<br/>';
-								  }
-								  if(isset($dat['f_event_date']) && $dat['f_event_date']==1){
+								}
+								if(isset($dat['f_event_date']) && $dat['f_event_date']==1){
 									$msg_content.='Date : '.$data['date'].'<br/>';
-								  }
-								  if(isset($dat['f_event_time']) && $dat['f_event_time']==1){
+								}
+								if(isset($dat['f_event_time']) && $dat['f_event_time']==1){
 									$msg_content.='Time : '.$data['time'].'<br/>';
-								  }
-								  if(isset($dat['f_event_location']) && $dat['f_event_location']==1){
+								}
+								if(isset($dat['f_event_location']) && $dat['f_event_location']==1){
 									$msg_content.='Location : '.$data['location'].'<br/>';
-								  }
-								  if(isset($dat['f_event_city']) && $dat['f_event_city']==1 && $data['event_city'] !=''){
+								}
+								if(isset($dat['f_event_city']) && $dat['f_event_city']==1 && $data['event_city'] !=''){
 									$city_det = $this->Api_model->get_datum('City', 'id,name', array('id'=>$data['event_city']), TRUE, 'id asc');
 									$msg_content.='City : '.$city_det->name.'<br/>';
-								  }
-								  if(isset($dat['f_event_type']) && $dat['f_event_type']==1){
+								}
+								if(isset($dat['f_event_type']) && $dat['f_event_type']==1){
 									$type_det = $this->Api_model->get_datum('event_type', 'id,name', array('id'=>$data['type']), TRUE, 'id asc');
 									$msg_content.='Type of Event : '.$type_det->name.'<br/>';
-								  }
-								  if(isset($msg_content) && $msg_content !='')
-								  {
+								}
+
+								if(isset($msg_content) && $msg_content !='') {
 									$updated_msg='<br/>The following details of the event has been changed.<br/><br/>'.$msg_content;
-								  }else
-								  {
+								} else {
 									$updated_msg='';
-								  }
-								  foreach ($get_users as $key) {
+								}
+								foreach ($get_users as $key) {
 									if(isset($key->fcm_regid) && $key->fcm_regid !='null' && $key->fcm_regid !=''){
-									  $registatoin_ids[]=$key->fcm_regid;
+									    $registatoin_ids[]=$key->fcm_regid;
 									}
 									if(isset($key->email) && $key->email !='null' && $key->email !=''){
-									  //$email[]=$key->email;
+									    //$email[]=$key->email;
 										if(isset($key->rsvp_auth_key) && !empty($key->rsvp_auth_key)){
 										  $auth_key=$key->rsvp_auth_key; 
-										}else
-										{
+										} else {
 										  $auth_key='';
 										}
 										$subject = "Event Re-scheduled";
@@ -811,7 +814,7 @@ class Api extends CI_Controller {
 								echo json_encode($results);
 								die;
 							}
-					 /* }else{
+					 /* } else {
 							$results = array('status' => ALREADY_EXIST);
 							echo json_encode($results);
 							die;
@@ -849,7 +852,7 @@ class Api extends CI_Controller {
 								echo json_encode($results);
 								die;
 							}
-						}else{
+						} else {
 							$results = array('status' => ALREADY_EXIST);
 							echo json_encode($results);
 							die;
@@ -957,10 +960,10 @@ class Api extends CI_Controller {
 											'type' =>TYPE_CANCEL,
 											'email_id' => $key->email,
 											'email_subject' =>$subject,
-										    // 'gtech_greating' =>$data['mail_gretting'],
+											// 'gtech_greating' =>$data['mail_gretting'],
 											'email_greating' =>$data['mail_gretting'],
 											'email_content' =>$data['mail_content'],
-										    // 'created_by' =>0,
+											// 'created_by' =>0,
 											'status' =>2,
 											'created_at' =>$this->device_validation->get_cur_date_time()
 										);
@@ -1070,7 +1073,7 @@ class Api extends CI_Controller {
 								$data['email']='';
 							}
 
-						    $auth_key = random_string('alnum', 14);
+							$auth_key = random_string('alnum', 14);
 							$user_arr=array('user_id'=>$value,'event_id'=>$data['event_id'],'created_from'=>APP,'created_on'=>$this->device_validation->get_cur_date_time(),
 											'type'=>INVITED_EVENT,'present'=>INACTIVE,'rsvp_auth_key'=>$auth_key);
 							$insertid[]=$this->Api_model->save_data('UserEvent',$user_arr);
@@ -1214,10 +1217,9 @@ class Api extends CI_Controller {
 				$results = array('status' => VALIDATION_FAILED);
 				echo json_encode($results);
 			} else {
-			  
-			   $data['participants_ids'] = json_decode($data['participants_ids_raw']);
+			    $data['participants_ids'] = json_decode($data['participants_ids_raw']);
 
-			   if (  (isset($data['user_id']) && !empty($data['user_id'])) 
+			    if (  (isset($data['user_id']) && !empty($data['user_id'])) 
 				  && (isset($data['event_id']) && !empty($data['event_id'])) 
 				  && (isset($data['participants_ids']) && !empty($data['participants_ids'])) ) {
 					
@@ -1253,8 +1255,7 @@ class Api extends CI_Controller {
 								
 						if(isset($event_arr) && !empty($event_arr)){
 							$user_choice = $event_arr->user_choice;
-						}else
-						{
+						} else {
 						  $user_choice = DEFAULT_STATUS; // user not choosing rsvp, status will be 0
 						}
 
@@ -1262,15 +1263,12 @@ class Api extends CI_Controller {
 							array('Event.id' => $data['event_id']), TRUE, 'id asc');
 						$eventdate=date("Y-m-d H:i:s", strtotime($ed->starts_on));
 						$current_date=$this->device_validation->get_cur_date_time(TRUE,TRUE);
-						if($eventdate >= $current_date)
-						{
+						if($eventdate >= $current_date) {
 							$user_go_cnt = $this->Api_model->count_detail('UserEvent', array('event_id' => $data['event_id'], 'user_choice' => GO));
 							$invited_user = $this->Api_model->count_detail('UserEvent', array('event_id' => $data['event_id']));
 							$user_may_go_cnt = $this->Api_model->count_detail('UserEvent', array('event_id' => $data['event_id'], 'user_choice' => MYBEGO));
 							$user_cantgo_cnt = $this->Api_model->count_detail('UserEvent', array('event_id' => $data['event_id'], 'user_choice' => CANTGO));
-						}
-						else 
-						{
+						} else {
 							$user_go_cnt = $this->Api_model->count_detail('UserEvent', array('event_id' => $data['event_id'], 'present' => ACTIVE,'late'=>INACTIVE));
 							$user_may_go_cnt = $this->Api_model->count_detail('UserEvent', array('event_id' => $data['event_id'],'present' => ACTIVE,'late'=>ACTIVE));
 							$invited_user = $this->Api_model->count_detail('UserEvent', array('event_id' => $data['event_id'], 'present' => MISSED,'late'=>DEFAULT_STATUS));
@@ -1290,7 +1288,7 @@ class Api extends CI_Controller {
 					echo json_encode($results);
 				}
 			  }
-		}else{
+		} else {
 			# $data['status'] = $this->mail_details();
 			$results = array('status' => 'Failed try again...');
 			echo json_encode($results);
@@ -1328,9 +1326,7 @@ class Api extends CI_Controller {
 	 * Date:        22-06-2017   
 	 * Description:     Function to list attendance details on event 
 	 */
-
-	function attendance_details()
-	{
+	function attendance_details() {
 		$valid = 1;
 		$res_array=array();
 		if ($valid == VALID_AGENTS) {
@@ -1354,48 +1350,45 @@ class Api extends CI_Controller {
 							array('table' => 'User',
 								'condition' => 'User.id=UserEvent.user_id',
 								'jointype' => 'LEFT'
-							)
-					);
+							));
+
 					$where=array();
-					if($data['status'] == ATTENDED)
-					{
-					  $where=array('User.status' => ACTIVE,'UserEvent.event_id' => $data['event_id'],'present'=>ACTIVE,'late'=>DEFAULT_STATUS);
+					if($data['status'] == ATTENDED) {
+						$where=array('User.status' => ACTIVE,'UserEvent.event_id' => $data['event_id'],'present'=>ACTIVE,'late'=>DEFAULT_STATUS);
 					}
-					if($data['status'] == LATE)
-					{
-					  $where=array('User.status' => ACTIVE,'UserEvent.event_id' => $data['event_id'],'present'=>ACTIVE,'late'=>ACTIVE);
+					if($data['status'] == LATE) {
+						$where=array('User.status' => ACTIVE,'UserEvent.event_id' => $data['event_id'],'present'=>ACTIVE,'late'=>ACTIVE);
 					}
-					if($data['status'] == MISSED)
-					{
-					  $where=array('User.status' => ACTIVE,'UserEvent.event_id' => $data['event_id'],'present'=>MISSED,'late'=>DEFAULT_STATUS);
+					if($data['status'] == MISSED) {
+						$where=array('User.status' => ACTIVE,'UserEvent.event_id' => $data['event_id'],'present'=>MISSED,'late'=>DEFAULT_STATUS);
 					}
 					$event_det = $this->Api_model->get_data('UserEvent', 'User.id,User.name,User.email,User.phone', $where, TRUE, 'User.name asc',$joins);
-						if (isset($event_det) && !empty($event_det)) {
-						   foreach ($event_det as $ed) {
-								$id = $ed->id;
-								$name = $ed->name;
-								$email = $ed->email;
-								$phone = $ed->phone;
-							   
-								$results_1 = array('id' => $id, 'name' => $name,'email' => $email, 'phone' => $phone);
-								$res_array[] = $results_1;
-							}
-							$results = array('status' => SUCCESS,'user_array'=>$res_array);
-							echo json_encode($results);
-						}else{
-							$results = array('status' => SUCCESS,'user_array'=>$res_array);
-							echo json_encode($results); 
-						}    
-				}else{ 
+					if (isset($event_det) && !empty($event_det)) {
+					   foreach ($event_det as $ed) {
+							$id = $ed->id;
+							$name = $ed->name;
+							$email = $ed->email;
+							$phone = $ed->phone;
+						   
+							$results_1 = array('id' => $id, 'name' => $name,'email' => $email, 'phone' => $phone);
+							$res_array[] = $results_1;
+						}
+						$results = array('status' => SUCCESS,'user_array'=>$res_array);
+						echo json_encode($results);
+					} else {
+						$results = array('status' => SUCCESS,'user_array'=>$res_array);
+						echo json_encode($results); 
+					}
+				} else { 
 					$results = array('status' => VALIDATION_FAILED,'user_array'=>$res_array);
 					echo json_encode($results);
 				}
 			}
-	  }else{
+	    } else {
 			# $data['status'] = $this->mail_details();
 			$results = array('status' => 'Failed try again...','user_array'=>$res_array);
 			echo json_encode($results);
-	  }
+	    }
 	}
 	 /**
 	 * CodeIgniter
@@ -1405,9 +1398,7 @@ class Api extends CI_Controller {
 	 * Date:        22-06-2017   
 	 * Description:     Function to list invited user details on event 
 	 */
-
-	function invited_user_details()
-	{
+	function invited_user_details() {
 		$valid = 1;
 		$res_array=array();
 		if ($valid == VALID_AGENTS) {
@@ -1430,30 +1421,30 @@ class Api extends CI_Controller {
 							));
 
 					$event_det = $this->Api_model->get_data('UserEvent', 'User.id,User.name', array('UserEvent.event_id'=>$data['event_id']), TRUE, 'id asc',$joins);
-							if (isset($event_det) && !empty($event_det)) {
-							   foreach ($event_det as $ed) {
-									$id = $ed->id;
-									$name = $ed->name;
-								   
-									$results_1 = array('id' => $id, 'name' => $name);
-									$res_array[] = $results_1;
-								}
-								   $results = array('status' => SUCCESS,'user_array'=>$res_array);
-								   echo json_encode($results);
-							}else{
-								   $results = array('status' => SUCCESS,'user_array'=>$res_array);
-								   echo json_encode($results); 
-							}    
-				}else{
+					if (isset($event_det) && !empty($event_det)) {
+					   foreach ($event_det as $ed) {
+							$id = $ed->id;
+							$name = $ed->name;
+						   
+							$results_1 = array('id' => $id, 'name' => $name);
+							$res_array[] = $results_1;
+						}
+					    $results = array('status' => SUCCESS,'user_array'=>$res_array);
+					    echo json_encode($results);
+					} else {
+						$results = array('status' => SUCCESS,'user_array'=>$res_array);
+						echo json_encode($results); 
+					}    
+				} else {
 					$results = array('status' => VALIDATION_FAILED,'user_array'=>$res_array);
 					echo json_encode($results);
 				}
 			}
-	  }else{
+	  	} else {
 			# $data['status'] = $this->mail_details();
 			$results = array('status' => 'Failed try again...','user_array'=>$res_array);
 			echo json_encode($results);
-	  }
+	  	}
 	}
 	
 	 /**
@@ -1464,9 +1455,7 @@ class Api extends CI_Controller {
 	 * Date:        30-06-2017   
 	 * Description:     Function to list city members 
 	 */
-
-	function city_members()
-	{
+	function city_members() {
 		$valid = 1;
 		$res_array=array();
 		if ($valid == VALID_AGENTS) {
@@ -1487,7 +1476,7 @@ class Api extends CI_Controller {
 					$joins = array();
 					if(isset($data['center_id'])&& !empty($data['center_id'])){
 						 $where = array('center_id'=>$data['center_id'],'city_id'=>$data['city_id'],'id !='=>$data['user_id']);
-					}else{
+					} else {
 						$where = array('city_id'=>$data['city_id'],'id !='=>$data['user_id']); 
 					}
 					$event_user_det=array();
@@ -1531,11 +1520,11 @@ class Api extends CI_Controller {
 					echo json_encode($results);
 				}
 			}
-	  }else{
+	    } else {
 			# $data['status'] = $this->mail_details();
 			$results = array('status' => 'Failed try again...','user_array'=>$res_array);
 			echo json_encode($results);
-	  }
+	    }
 	}
 	/**
 	 * CodeIgniter
@@ -1545,8 +1534,7 @@ class Api extends CI_Controller {
 	 * Date:        30-06-2017   
 	 * Description:     Function to list event invited members 
 	 */
-	function invited_members()
-	{
+	function invited_members() {
 		$valid = 1;
 		$res_array=array();
 		if ($valid == VALID_AGENTS) {
@@ -1556,7 +1544,7 @@ class Api extends CI_Controller {
 			$data['type'] = $this->input->post_get('type');
 			$this->device_validation->check_hash_key_validation($data['user_id'], $data['hash_key']);
 			$this->api_validation->api_data_validation($data['user_id'], array('required'));
-		   $this->api_validation->api_data_validation($data['event_id'], array('required'));
+			$this->api_validation->api_data_validation($data['event_id'], array('required'));
 		   
 			$validation = $this->api_validation->run();
 			if ($validation == VALIDATION_FAILED) {
@@ -1571,59 +1559,58 @@ class Api extends CI_Controller {
 								  ));
 					
 					if(isset($data['type']) && $data['type'] == GO){ //  user list for marking rsvp option as GO
-					  $where=array('UserEvent.event_id'=>$data['event_id'],'UserEvent.user_choice'=>GO); 
-					}else if(isset($data['type']) && $data['type'] == MYBEGO){
-					  $where=array('UserEvent.event_id'=>$data['event_id'],'UserEvent.user_choice'=>MYBEGO);
-					}else if(isset($data['type']) && $data['type'] == CANTGO){
-					  $where=array('UserEvent.event_id'=>$data['event_id'],'UserEvent.user_choice'=>CANTGO); 
-					}else
-					{
-					  $where=array('UserEvent.event_id'=>$data['event_id']);
+						$where=array('UserEvent.event_id'=>$data['event_id'],'UserEvent.user_choice'=>GO); 
+					} else if(isset($data['type']) && $data['type'] == MYBEGO) {
+						$where=array('UserEvent.event_id'=>$data['event_id'],'UserEvent.user_choice'=>MYBEGO);
+					} else if(isset($data['type']) && $data['type'] == CANTGO) {
+						$where=array('UserEvent.event_id'=>$data['event_id'],'UserEvent.user_choice'=>CANTGO); 
+					} else {
+						$where=array('UserEvent.event_id'=>$data['event_id']);
 					}
 				   
 					$user_det = $this->Api_model->get_data('User', 'UserEvent.present,UserEvent.late,UserEvent.user_choice,UserEvent.reason,User.id,User.title,User.name,User.email,User.phone,User.city_id,User.center_id',
 								$where, TRUE, 'User.name asc',$joins);
-							if (isset($user_det) && !empty($user_det)) {
-								foreach ($user_det as $ud) {
-									$id = $ud->id;
-									$title = $ud->title;
-									$name = $ud->name;
-									$email = $ud->email;
-									$phone = $ud->phone;
-									$city_id = $ud->city_id;
-									$center_id = $ud->center_id;
-									if($ud->present ==ACTIVE && $ud->late == DEFAULT_STATUS){
-										$attendance_status=ATTENDED; // set as attended
-									} else if($ud->present ==ACTIVE && $ud->late == ACTIVE){
-										$attendance_status=LATE;  //set as late
-									} else if($ud->present ==MISSED && $ud->late == DEFAULT_STATUS){
-										$attendance_status=MISSED;  //set as missed
-									} else {
-										$attendance_status=DEFAULT_STATUS;  // Not marking attendance
-									}
-									$user_choice=$ud->user_choice;
-									$reason=$ud->reason;
-									
-									$results_1 = array('id' => $id, 'title' => $title, 'name' => $name, 'email' => $email, 'phone' => $phone, 
-											'city_id' => $city_id,'center_id'=>$center_id,'attendance_status'=>$attendance_status,'rsvp_choice'=>$user_choice,'reason'=>$reason);
-									$res_array[] = $results_1;
-								}
-								   $results = array('status' => SUCCESS,'user_array'=>$res_array);
-								   echo json_encode($results);
-							}else{
-								   $results = array('status' => SUCCESS,'user_array'=>$res_array);
-								   echo json_encode($results); 
-							}    
-				}else{
+					if (isset($user_det) && !empty($user_det)) {
+						foreach ($user_det as $ud) {
+							$id = $ud->id;
+							$title = $ud->title;
+							$name = $ud->name;
+							$email = $ud->email;
+							$phone = $ud->phone;
+							$city_id = $ud->city_id;
+							$center_id = $ud->center_id;
+							if($ud->present ==ACTIVE && $ud->late == DEFAULT_STATUS){
+								$attendance_status=ATTENDED; // set as attended
+							} else if($ud->present ==ACTIVE && $ud->late == ACTIVE){
+								$attendance_status=LATE;  //set as late
+							} else if($ud->present ==MISSED && $ud->late == DEFAULT_STATUS){
+								$attendance_status=MISSED;  //set as missed
+							} else {
+								$attendance_status=DEFAULT_STATUS;  // Not marking attendance
+							}
+							$user_choice=$ud->user_choice;
+							$reason=$ud->reason;
+							
+							$results_1 = array('id' => $id, 'title' => $title, 'name' => $name, 'email' => $email, 'phone' => $phone, 
+									'city_id' => $city_id,'center_id'=>$center_id,'attendance_status'=>$attendance_status,'rsvp_choice'=>$user_choice,'reason'=>$reason);
+							$res_array[] = $results_1;
+						}
+						$results = array('status' => SUCCESS,'user_array'=>$res_array);
+						echo json_encode($results);
+					} else {
+						$results = array('status' => SUCCESS,'user_array'=>$res_array);
+						echo json_encode($results); 
+					}    
+				} else {
 					$results = array('status' => VALIDATION_FAILED,'user_array'=>$res_array);
 					echo json_encode($results);
 				}
 			}
-	  }else{
+		} else {
 			# $data['status'] = $this->mail_details();
 			$results = array('status' => 'Failed try again...','user_array'=>$res_array);
 			echo json_encode($results);
-	  }
+		}
 	}
 
 	/**
@@ -1634,8 +1621,7 @@ class Api extends CI_Controller {
 	 * Date:        26-06-2017   
 	 * Description:     Function to get event details
 	 */
-	function event_detailed_view()
-	{
+	function event_detailed_view() {
 		$valid = 1;
 		$res_array=array();
 		if ($valid == VALID_AGENTS) {
@@ -1684,9 +1670,7 @@ class Api extends CI_Controller {
 							$invited_user = $this->Api_model->count_detail('UserEvent', array('event_id' => $event_id));
 							$user_may_go_cnt = $this->Api_model->count_detail('UserEvent', array('event_id' => $event_id, 'user_choice' => MYBEGO));
 							$user_cantgo_cnt = $this->Api_model->count_detail('UserEvent', array('event_id' => $event_id, 'user_choice' => CANTGO));
-						}
-						else 
-						{
+						} else {
 							$user_go_cnt = $this->Api_model->count_detail('UserEvent', array('event_id' => $event_id, 'present' => ACTIVE,'late'=>INACTIVE));
 							 $user_may_go_cnt = $this->Api_model->count_detail('UserEvent', array('event_id' => $event_id,'present' => ACTIVE,'late'=>ACTIVE));
 							 $invited_user = $this->Api_model->count_detail('UserEvent', array('event_id' => $event_id, 'present' => MISSED,'late'=>DEFAULT_STATUS));
@@ -1696,14 +1680,13 @@ class Api extends CI_Controller {
 						$results = array('status' => SUCCESS,'event_id' => $event_id, 'event_name' => $event_name, 'event_details' => $event_details, 'event_date' => $event_date, 'event_location' => $event_location, 'event_type' => $event_type, 'latitude' => $latitude, 'longitude' => $longitude, 'event_city' => $city_id,'event_time'=>$event_time,'event_going_count' => $user_go_cnt, 'event_invited_count' => $invited_user, 'event_maybe_count' => $user_may_go_cnt,'user_choice'=>$user_choice,'event_cantgo_count' => $user_cantgo_cnt);
 						echo json_encode($results);
 						die;
-					}else{
+					} else {
 						//$results = array('status' => FAILURE, 'event_id' => "", 'event_name' => "", 'event_details' => "", 'event_date' => "", 'event_location' => "", 'event_type' => "", 'latitude' => "", 'longitude' => "", 'event_city' => "", 'event_going_count' => "", 'event_invited_count' => "", 'event_maybe_count' => "");
-						 $results = array('status' => FAILURE);
-						 echo json_encode($results);
+						$results = array('status' => FAILURE);
+						echo json_encode($results);
 						die;
 					}    
-					
-				}else{
+				} else {
 					$results = array('status' => VALIDATION_FAILED,'user_array'=>$res_array);
 					echo json_encode($results);
 				}
@@ -1749,15 +1732,15 @@ class Api extends CI_Controller {
 		$user_choice='';
 		$user_cantgo_cnt='';
 	  
-	    $user_det = $this->Api_model->get_datum('UserEvent', 'user_id', array('rsvp_auth_key' => $rsvp_auth_key,'event_id'=>$event_id), TRUE, 'id asc');
-	    if(isset($user_det) && !empty($user_det)){
-		    $where = array('user_id' => $user_det->user_id,'event_id' => $event_id);
-		    $update_array = array('user_choice' => $rsvp);
-		    $is_update = $this->Api_model->update("UserEvent", $update_array, $where);
-		    if(isset($is_update) && !empty($is_update)){
-				$data['msg']='Your preference recorded successfully.';}else{
+		$user_det = $this->Api_model->get_datum('UserEvent', 'user_id', array('rsvp_auth_key' => $rsvp_auth_key,'event_id'=>$event_id), TRUE, 'id asc');
+		if(isset($user_det) && !empty($user_det)){
+			$where = array('user_id' => $user_det->user_id,'event_id' => $event_id);
+			$update_array = array('user_choice' => $rsvp);
+			$is_update = $this->Api_model->update("UserEvent", $update_array, $where);
+			if(isset($is_update) && !empty($is_update)){
+				$data['msg']='Your preference recorded successfully.';} else {
 				$data['msg']='Something went wrong.';  
-		    }
+			}
 			$ed = $this->Api_model->get_datum('Event', 'Event.id AS event_id,Event.name,Event.description,Event.starts_on,Event.city_id,Event.latitude,Event.longitude,Event.city_id,Event.place,Event.event_type_id', 
 					array('Event.id' => $event_id), TRUE, 'id asc');
 		
@@ -1809,7 +1792,7 @@ class Api extends CI_Controller {
 				$this->load->view('succees_page',$data);
 			}
 	   } else {
-		    if(isset($type) && $type ==APP){
+			if(isset($type) && $type ==APP){
 				$results = array('status' => SUCCESS,'event_id' => $event_id, 'event_name' => $event_name, 'event_details' => $event_details, 
 					'event_date' => $event_date, 'event_location' => $event_location, 'event_type' => $event_type, 'latitude' => $latitude, 
 					'longitude' => $longitude, 'event_city' => $city_id,'event_time'=>$event_time,'event_going_count' => $user_go_cnt, 
@@ -1893,10 +1876,10 @@ class Api extends CI_Controller {
 				$data['mail_content']   = $esdc->email_content;
 				//$data['gtech_gretting']=$esdc->gtech_greating;
 				if($e_mailid != '') {
-				    $content =  $this->load->view('mail_template',$data,TRUE);
-				    echo $is_mailsent= $this->mail->send_email($e_mailid,$email_subject,$content); 
+					$content =  $this->load->view('mail_template',$data,TRUE);
+					echo $is_mailsent= $this->mail->send_email($e_mailid,$email_subject,$content); 
 				
-				    echo "<br>";
+					echo "<br>";
 					if($is_mailsent) {
 						$i++;
 						$data_mail  = array('status'=>1,'response_mail'=>$is_mailsent);
