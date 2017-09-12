@@ -1103,8 +1103,8 @@ class Api extends CI_Controller {
 		</div> Looking forward to meet you at the Event.<br/>";
 								#$data['mail_content']='Test';
 
-							//$content = $this->load->view('mail_template',$data,TRUE);
-							//$this->mail->send_email($data['email'],$subject,$content);
+							$content = $this->load->view('mail_template',$data,TRUE);
+							$this->mail->send_email($data['email'],$subject,$content);
 							$tracker_exist = $this->Api_model->get_datum('App_Event_Mail_Tracker', 'id', 
 												array('receive_id' => $value,'item_id'=>$data['event_id'],'type'=>TYPE_INVITE,'status'=>2), TRUE, 'id asc');
 							if (isset($tracker_exist) && empty($tracker_exist)) {
