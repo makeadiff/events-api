@@ -110,13 +110,15 @@ class Api extends CI_Controller {
 			} else {
 				if ((isset($data['email_id']) && !empty($data['email_id'])) && (isset($data['password']) && !empty($data['password']))) {
 					$login_data_det = $this->Api_model->login_data($data);
-					#echo $this->db->last_query();die;
+
+					// dump($login_data_det); echo $this->db->last_query();die;
 					if (isset($login_data_det) && !empty($login_data_det)) {
 						#$status = $this->exist_user($data);
 						$id = $login_data_det['id'];
 						$title = $login_data_det['title'];
 						$name = $login_data_det['name'];
 						$email = $login_data_det['email'];
+						$mad_email = $login_data_det['mad_email'];
 						$phone = $login_data_det['phone'];
 						$dbpassword = $login_data_det['password'];
 						$role_id = $login_data_det['group_type'];
@@ -159,7 +161,7 @@ class Api extends CI_Controller {
 							//$hash_key = $this->device_validation->key_generator($data['imei_number']);
 							
 							if (isset($keyvalue) && !empty($keyvalue)) {
-								$results = array('status' => LOGIN_SUCCESS, 'user_id' => $id, 'name' => $name, 'email' => $email, 'phone' => $phone, 
+								$results = array('status' => LOGIN_SUCCESS, 'user_id' => $id, 'name' => $name, 'email' => $email, 'mad_email' => $mad_email, 'phone' => $phone, 
 													'role' => $role_id,'city_id'=>$city_id, 'cities' => $dbstatus['city_det'], 'verticals' => $dbstatus['vertical_det'], 
 													'centers' => $dbstatus['center_det'], 'members' => $dbstatus['user_det'], 'hash_key' => $hash_key,
 													'event_types'=>$dbstatus['event_type_det']);
@@ -1495,7 +1497,7 @@ class Api extends CI_Controller {
 							$email = $ud->email;
 							$phone = $ud->phone;
 							$city_id = $ud->city_id;
-							$center_id = $ud->center_id;
+							$center_id = $ud->center_id; // :TODO: This is not how you get the center_id - correct this.
 
 							if(isset($event_user_det) && !empty($event_user_det) && !empty($invite_arr)){
 								if(in_array($id,$invite_arr)){ 
@@ -1577,7 +1579,7 @@ class Api extends CI_Controller {
 							$email = $ud->email;
 							$phone = $ud->phone;
 							$city_id = $ud->city_id;
-							$center_id = $ud->center_id;
+							$center_id = $ud->center_id; // :TODO: - This is not how you get the center - correct this.
 							if($ud->present ==ACTIVE && $ud->late == DEFAULT_STATUS){
 								$attendance_status=ATTENDED; // set as attended
 							} else if($ud->present ==ACTIVE && $ud->late == ACTIVE){
