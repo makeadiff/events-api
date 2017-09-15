@@ -1482,7 +1482,9 @@ class Api extends CI_Controller {
 					}
 					$event_user_det=array();
 					$invite_arr=array();
-					if(!$user_det) $user_det = $this->Api_model->get_data('User', 'id,title,name,email,phone,city_id,center_id', $where, TRUE, 'name asc',$joins);
+					if(!isset($user_det)) // We have already gotten a user list.
+						$user_det = $this->Api_model->get_data('User', 'id,title,name,email,phone,city_id,center_id', $where, TRUE, 'name asc',$joins);
+					
 					$event_user_det = $this->Api_model->get_data('UserEvent', 'user_id', array('event_id'=>$data['event_id']), TRUE, 'id asc',$joins);
 					if(isset($event_user_det ) && !empty($event_user_det )){
 						foreach ($event_user_det as  $value) {
