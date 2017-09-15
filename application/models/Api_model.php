@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
@@ -386,6 +385,19 @@ class Api_model extends CI_Model {
         } else {
             return FALSE;
         }
+    }
+
+
+    function get_teachers_in_center($center_id) {
+        $users = $this->db->query("SELECT U.id, U.name, U.title, U.email, U.phone, U.city_id, $center_id AS center_id
+                                FROM User U 
+                                INNER JOIN UserBatch UB ON UB.user_id=U.id 
+                                INNER JOIN Batch B ON UB.batch_id=B.id 
+                                WHERE U.status='1' AND U.user_type='volunteer' AND B.center_id=$center_id AND B.year=2017 AND B.status='1'
+                                ORDER BY U.name")->result();
+
+        // :TODO: Add mentors to this list?
+        return $users;
     }
 
 }

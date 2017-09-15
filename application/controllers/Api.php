@@ -351,7 +351,6 @@ class Api extends CI_Controller {
 								$event_time=date("h:i A", strtotime($ed->starts_on));
 								$event_date=date("d-F-Y", strtotime($ed->starts_on));
 
-								
 								$user_go_cnt = $this->Api_model->count_detail('UserEvent', array('event_id' => $event_id, 'user_choice' => GO));
 								$invited_user = $this->Api_model->count_detail('UserEvent', array('event_id' => $event_id));
 								$user_may_go_cnt = $this->Api_model->count_detail('UserEvent', array('event_id' => $event_id, 'user_choice' => MYBEGO));
@@ -1476,13 +1475,14 @@ class Api extends CI_Controller {
 				if ((isset($data['user_id']) && !empty($data['user_id']))) {
 					$joins = array();
 					if(isset($data['center_id'])&& !empty($data['center_id'])){
-						 $where = array('center_id'=>$data['center_id'],'city_id'=>$data['city_id'],'id !='=>$data['user_id'], 'status' => 1, 'user_type' => 'volunteer');
+						// $where = array('center_id'=>$data['center_id'],'city_id'=>$data['city_id'],'id !='=>$data['user_id'], 'status' => 1, 'user_type' => 'volunteer');
+						$user_det = $this->Api_model->get_teachers_in_center($data['center_id']);
 					} else {
 						$where = array('city_id'=>$data['city_id'],'id !='=>$data['user_id'], 'status' => 1, 'user_type' => 'volunteer'); 
 					}
 					$event_user_det=array();
 					$invite_arr=array();
-					$user_det = $this->Api_model->get_data('User', 'id,title,name,email,phone,city_id,center_id', $where, TRUE, 'name asc',$joins);
+					if(!$user_det) $user_det = $this->Api_model->get_data('User', 'id,title,name,email,phone,city_id,center_id', $where, TRUE, 'name asc',$joins);
 					$event_user_det = $this->Api_model->get_data('UserEvent', 'user_id', array('event_id'=>$data['event_id']), TRUE, 'id asc',$joins);
 					if(isset($event_user_det ) && !empty($event_user_det )){
 						foreach ($event_user_det as  $value) {
