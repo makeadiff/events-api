@@ -1,0 +1,184 @@
+/*
+Template name: Sanathana
+Author: Sijomon R
+Created Date: 25-06-2016
+*/
+
+* {
+	outline: none !important;
+	-webkit-transition: all 0.3s ease;
+	-moz-transition: all 0.3s ease;
+	-o-transition: all 0.3s ease;
+	-ms-transition: all 0.3s ease;
+	transition: all 0.3s ease;
+}
+
+::-moz-selection { /* Code for Firefox */
+ color: white;
+ background: #000;
+}
+::selection {
+	color: white;
+	background: #000;
+}
+html {
+	height: 100%;
+	display: block;
+}
+body {
+	height: 100%;
+	padding: 0;
+	overflow-x: hidden;
+	font-weight: 300;
+	font-family: 'Source Sans Pro', sans-serif;
+	color: #333;
+}
+a, a:hover {
+	text-decoration: none;
+}
+.padng_0 {
+	padding: 0;
+}
+.marg_20 {
+	margin: 20px 0;
+}
+.logodiv img {
+	display: block;
+	margin: 0px auto;
+}
+#logid, #fp_id {
+	/*background: #ddd;*/
+	/*background: url(../images/login-bg.jpg) top center no-repeat;*/
+}
+.forms .form-control {
+	outline: 0;
+	background: #f2f2f2;
+	width: 100%;
+	border: 0;
+	margin: 0 0 15px;
+	box-sizing: border-box;
+	font-size: 14px;
+	box-shadow: none;
+}
+.logindiv {
+	width: 360px;
+	/*padding: 8% 0 0;
+  margin: auto;*/
+	margin: 100px 100px 0 0;
+	float: right;
+}
+.forms {
+	position: relative;
+	z-index: 1;
+	background: #FFFFFF;
+	max-width: 360px;
+	/*margin: 0 auto 100px;
+  padding: 32px;*/
+	padding: 20px;
+	box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+.forms #submit {
+	text-transform: uppercase;
+	outline: 0;
+	background: #337ab7;
+	width: 100%;
+	border: 0;
+	padding: 15px;
+	color: #FFFFFF;
+	font-size: 14px;
+	-webkit-transition: all 0.3 ease;
+	transition: all 0.3 ease;
+	cursor: pointer;
+	background: #512DA8;
+}
+.btn-theme {
+	display: block;
+	margin: 0px auto;
+	background: #919495;
+	color: #fff;
+}
+.forms a {
+	color: #333339;
+	text-align: center;
+	display: block;
+}
+/*Navigation*/
+.form-control:focus {
+	border-color: #286090;
+	box-shadow: none;
+}
+/*.navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover{
+     background:rgba(121, 60, 207, 1) !important;
+}*/
+
+/*Page Title*/
+h2.pagetitle {
+	text-align: left;
+	border-bottom: 3px solid #eee;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	line-height: 1;
+	margin: 25px 0 25px 0;
+	padding-bottom: 10px;
+	position: relative;
+	font-size: 20px;
+}
+h2.pagetitle:after {
+	content: " ";
+	position: absolute;
+	bottom: -3px;
+	left: 0;
+	width: 210px;
+	height: 3px;
+	background: #9868DC;
+}
+/*Checkbox Custom*/
+.control-group {
+	display: inline-block;
+	vertical-align: top;
+	background: #fff;
+	text-align: left;
+	box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+	padding: 30px;
+	width: 200px;
+	height: 210px;
+	margin: 10px;
+}
+.control {
+	display: block;
+	position: relative;
+	padding-left: 30px;
+	margin-bottom: 15px;
+	cursor: pointer;
+	font-size: 18px;
+}
+.control input {
+	position: absolute;
+	z-index: -1;
+	opacity: 0;
+}
+/*Inner page styles*/
+i {
+	color: #9868DC;
+}
+.form-control {
+	color: #333;
+	;
+}
+.error {
+	color: rgb(238, 57, 57);
+}
+.alert-info {
+	padding: 6px;
+	background: white;
+	color: #333;
+}
+.text-danger {
+	color: #E32723;
+}
+.success {
+	color: #5cb85c;
+}
+.dropdown-menu {
+	min-width: 187px !important;
+}

@@ -54,4 +54,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 $route['default_controller'] = 'Api';
 $route['404_override'] = '';
-$route['translate_uri_dashes'] = FALSE;
+$route['translate_uri_dashes'] = TRUE;
+$route['mad-reports'] = 'reports/mad_reports';
+$route['attendance-agregator-report'] = 'reports/attendance_agregator_report';
+$route['event-attendance-report'] = 'reports/event_attendance_report';
