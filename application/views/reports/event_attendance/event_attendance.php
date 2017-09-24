@@ -66,7 +66,7 @@ function get_center() {
 	if (city_vals != '') {
 		$.ajax({
 			type: 'post',
-			url: 'get_center',
+			url: 'reports/get_center',
 			data: "cities=" + encodeURIComponent(city_vals),
 			success: function (response) {
 				var obj = JSON.parse(response);

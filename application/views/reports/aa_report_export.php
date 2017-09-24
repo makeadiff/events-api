@@ -2,9 +2,11 @@
 $filename = "Attendance-Agregator-Report";
 header("Cache-control: private");
 header('Content-Encoding: UTF-8');
-header("Content-Transfer-Encoding: binary");
-header("Content-type: application/msexcel; charset=UTF-8");
-header("Content-Disposition:attachment; filename=" . $filename . ".xls");
+if($this->config->item('output_format') != 'html') {
+    header("Content-Transfer-Encoding: binary");
+    header("Content-type: application/msexcel; charset=UTF-8");
+    header("Content-Disposition:attachment; filename=" . $filename . ".xls");
+}
 ?>
 <html>
     <head>

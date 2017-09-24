@@ -136,7 +136,7 @@ class Reports extends CI_Controller {
             $report_details = $this->Reports_model->get_data('Event AS EV', $column, $condition, TRUE, 'EV.id asc', $join);
             if (isset($report_details) && !empty($report_details)) {
                 $data['report_details'] = $report_details;
-                $this->load->view('reports/attendance_agregator/aa_report_export', $data);
+                 $this->load->view('reports/attendance_agregator/aa_report_export', $data);
             } else {
                 $this->session->set_flashdata('message', 'No records found.');
                 redirect('attendance-agregator-report');
@@ -167,11 +167,11 @@ class Reports extends CI_Controller {
     public function event_attendance_report() {
         $data['city'] = $this->input->post_get('city');
         $data['event_type'] = $this->input->post_get('event_type');
-        $data['timeframe'] = $this->input->post_get('timeframe');
+        $data['center'] = $this->input->post_get('center');
 
         #Validation starts here
         $this->form_validation->set_rules('city[]', 'City', 'required');
-        $this->form_validation->set_rules('center', 'Center', 'required');
+        $this->form_validation->set_rules('center[]', 'Center', 'required');
         $this->form_validation->set_rules('event_type', 'Event Type', 'required');
         if ($this->form_validation->run() === FALSE) {
             $city_det = $this->Reports_model->get_data('City', 'id,name', array(), TRUE, 'id asc');
@@ -201,32 +201,17 @@ class Reports extends CI_Controller {
                 }
                 $city_val = rtrim($city_val, ',');
             }
-            $event_type_val = '';
-            if (isset($data['event_type']) && !empty($data['event_type'])) {
-                foreach ($data['event_type'] as $row) {
-                    $event_type_val.=$row . ',';
-                }
-                $event_type_val = rtrim($event_type_val, ',');
-            }
+            $event_type_val = $data['event_type'];
+            // if (isset($data['event_type']) && !empty($data['event_type'])) {
+            //     foreach ($data['event_type'] as $row) {
+            //         $event_type_val.=$row . ',';
+            //     }
+            //     $event_type_val = rtrim($event_type_val, ',');
+            // }
+            
             $column = 'EV.id,CT.name AS city_name,ET.name AS event_type,EV.name AS event_name,EV.starts_on AS event_startson';
             $condition = 'EV.event_type_id IN (' . $event_type_val . ') AND EV.city_id IN (' . $city_val . ')';
-            $cur_date = date('Y-m-d');
-            $cur_date_1day = date("Y-m-d", strtotime("+ 1 day"));
-            $cur_date_1week = date("Y-m-d", strtotime("+ 1 week"));
-            $cur_date_2week = date("Y-m-d", strtotime("+ 2 week"));
-            $cur_date_4week = date("Y-m-d", strtotime("+ 4 day"));
-            if ($data['timeframe'] == 1) {
-                $condition .=' AND EV.starts_on >"' . $cur_date . '"';
-            } elseif ($data['timeframe'] == 2) {
-                #$condition .=' AND EV.starts_on BETWEEN "' . $cur_date . '" AND "' . $cur_date_1day . '"';
-                $condition .=' AND DATE(EV.starts_on) >"' . $cur_date . '" AND DATE(EV.starts_on) <= "' . $cur_date_1day . '"';
-            } elseif ($data['timeframe'] == 3) {
-                $condition .=' AND DATE(EV.starts_on) >"' . $cur_date . '" AND DATE(EV.starts_on) <= "' . $cur_date_1week . '"';
-            } elseif ($data['timeframe'] == 4) {
-                $condition .=' AND DATE(EV.starts_on) >"' . $cur_date . '" AND DATE(EV.starts_on) <= "' . $cur_date_2week . '"';
-            } elseif ($data['timeframe'] == 5) {
-                $condition .=' AND DATE(EV.starts_on) >"' . $cur_date . '" AND DATE(EV.starts_on) <= "' . $cur_date_4week . '"';
-            }
+            
             $join = array(
                 array(
                     'table' => 'City AS CT',
@@ -239,13 +224,20 @@ class Reports extends CI_Controller {
                     'jointype' => 'left'
                 )
             );
+
             $report_details = $this->Reports_model->get_data('Event AS EV', $column, $condition, TRUE, 'EV.id asc', $join);
+            // print $this->Reports_model->db->last_query(); 
+            // print_r($data);
+            // print_r($report_details);
+            // exit;
             if (isset($report_details) && !empty($report_details)) {
                 $data['report_details'] = $report_details;
+                $data['aa_report_choice'] = 1;
+
                 $this->load->view('reports/aa_report_export', $data);
             } else {
                 $this->session->set_flashdata('message', 'No records found.');
-                redirect('attendance-agregator-report');
+                redirect('event-attendance-report');
             }
         }
     }
