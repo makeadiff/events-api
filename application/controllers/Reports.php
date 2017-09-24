@@ -232,7 +232,7 @@ class Reports extends CI_Controller {
             // exit;
             if (isset($report_details) && !empty($report_details)) {
                 $data['report_details'] = $report_details;
-                $data['aa_report_choice'] = 1;
+                $data['aa_report_choice'] = 2;
 
                 $this->load->view('reports/aa_report_export', $data);
             } else {

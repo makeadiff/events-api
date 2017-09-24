@@ -54,19 +54,19 @@
 		</div>
 	</div>
 </body>
-<style>
+<style type="text/css">
 body{
-	background: #36618c url(<?php echo base_url(); ?>images/mad_bg.png) no-repeat fixed center center;
+	background: #36618c url('<?php echo base_url(); ?>images/mad_bg.png') no-repeat fixed center center;
 	background-size: 100%;
 }
 </style>
-<script>
+<script type="text/javascript">
 function get_center() {
 	var city_vals = $('select#city').val();
 	if (city_vals != '') {
 		$.ajax({
 			type: 'post',
-			url: 'reports/get_center',
+			url: "<?php echo site_url('reports/get_center'); ?>",
 			data: "cities=" + encodeURIComponent(city_vals),
 			success: function (response) {
 				var obj = JSON.parse(response);
