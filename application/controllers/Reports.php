@@ -105,21 +105,21 @@ class Reports extends CI_Controller {
             $column = 'EV.id,CT.name AS city_name,ET.name AS event_type,EV.name AS event_name,EV.starts_on AS event_startson';
             $condition = 'EV.event_type_id IN (' . $event_type_val . ') AND EV.city_id IN (' . $city_val . ')';
             $cur_date = date('Y-m-d');
-            $cur_date_1day = date("Y-m-d", strtotime("+ 1 day"));
-            $cur_date_1week = date("Y-m-d", strtotime("+ 1 week"));
-            $cur_date_2week = date("Y-m-d", strtotime("+ 2 week"));
-            $cur_date_4week = date("Y-m-d", strtotime("+ 4 day"));
+            $cur_date_1day = date("Y-m-d", strtotime("- 1 day"));
+            $cur_date_1week = date("Y-m-d", strtotime("- 1 week"));
+            $cur_date_2week = date("Y-m-d", strtotime("- 2 week"));
+            $cur_date_4week = date("Y-m-d", strtotime("- 4 day"));
             if ($data['timeframe'] == 1) {
-                $condition .=' AND EV.starts_on >"' . $cur_date . '"';
+                $condition .=' AND EV.starts_on < "' . $cur_date . '"';
             } elseif ($data['timeframe'] == 2) {
                 #$condition .=' AND EV.starts_on BETWEEN "' . $cur_date . '" AND "' . $cur_date_1day . '"';
-                $condition .=' AND DATE(EV.starts_on) >"' . $cur_date . '" AND DATE(EV.starts_on) <= "' . $cur_date_1day . '"';
+                $condition .=' AND DATE(EV.starts_on) < "' . $cur_date . '" AND DATE(EV.starts_on) >= "' . $cur_date_1day . '"';
             } elseif ($data['timeframe'] == 3) {
-                $condition .=' AND DATE(EV.starts_on) >"' . $cur_date . '" AND DATE(EV.starts_on) <= "' . $cur_date_1week . '"';
+                $condition .=' AND DATE(EV.starts_on) < "' . $cur_date . '" AND DATE(EV.starts_on) >= "' . $cur_date_1week . '"';
             } elseif ($data['timeframe'] == 4) {
-                $condition .=' AND DATE(EV.starts_on) >"' . $cur_date . '" AND DATE(EV.starts_on) <= "' . $cur_date_2week . '"';
+                $condition .=' AND DATE(EV.starts_on) < "' . $cur_date . '" AND DATE(EV.starts_on) >= "' . $cur_date_2week . '"';
             } elseif ($data['timeframe'] == 5) {
-                $condition .=' AND DATE(EV.starts_on) >"' . $cur_date . '" AND DATE(EV.starts_on) <= "' . $cur_date_4week . '"';
+                $condition .=' AND DATE(EV.starts_on) < "' . $cur_date . '" AND DATE(EV.starts_on) >= "' . $cur_date_4week . '"';
             }
             $join = array(
                 array(
@@ -134,6 +134,8 @@ class Reports extends CI_Controller {
                 )
             );
             $report_details = $this->Reports_model->get_data('Event AS EV', $column, $condition, TRUE, 'EV.id asc', $join);
+
+            // print $this->Reports_model->db->last_query(); exit;
             if (isset($report_details) && !empty($report_details)) {
                 $data['report_details'] = $report_details;
                  $this->load->view('reports/attendance_agregator/aa_report_export', $data);
