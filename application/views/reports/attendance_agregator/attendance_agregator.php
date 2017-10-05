@@ -37,12 +37,12 @@
                         </div>
                         <div class="form-group">
                             <?php
-                            echo form_multiselect('city[]', $city_det_list, '', 'id ="city" class="form-control input-sm"');
+                            echo form_multiselect('city[]', $city_det_list, '', 'id ="city" onchange="unselect_all_city()" onblur="unselect_all_city()" class="form-control input-sm"');
                             ?>
                         </div>
                         <div class="form-group">
                             <?php
-                            echo form_multiselect('event_type[]', $event_type_det_list, '', 'id ="event_type" class="form-control input-sm"');
+                            echo form_multiselect('event_type[]', $event_type_det_list, '', 'id ="event_type" onchange="unselect_all_event_type()" onblur="unselect_all_event_type()" class="form-control input-sm"');
                             ?>
                         </div>
                         <div class="form-group">
@@ -51,7 +51,12 @@
                             echo form_dropdown('timeframe', $aa_report_timeframe, '', 'id ="timeframe" class="form-control input-sm"');
                             ?>
                         </div>
-                        <input type="submit" value="Generate CSV" class="btn btn-info btn-block" id="submit_btn">
+                        <div class="col-xs-12">
+                        <div class="col-sm-6">
+                            <button type="reset" class="btn btn-danger btn-block" value="Reset" onclick="reset_mdd();">Reset</button></div>
+                        
+                        <div class="col-sm-6">
+                            <input type="submit" value="Generate CSV" class="btn btn-info btn-block" id="submit_btn"></div></div>
 
                         </form>
                     </div>
@@ -61,8 +66,102 @@
     </div>
 </body>
 <style>
-body{
-    background: #36618c url(<?php echo base_url(); ?>images/mad_bg.png) no-repeat fixed center center;
-    background-size: 100%;
-}
+    body{
+        background: #36618c url(<?php echo base_url(); ?>images/mad_bg.png) no-repeat fixed center center;
+        background-size: 100%;
+    }
 </style>
+<script>
+    /*$(document).ready(function () {
+     $("#aa_reports").validate({
+     onkeyup: false,
+     rules: {
+     aa_report_choice: {
+     required: true
+     },
+     city: {
+     required: true
+     },
+     event_type: {
+     required: true
+     },
+     timeframe : {  required : true,
+     }
+     },
+     messages: {
+     aa_report_choice: {
+     required: "Please specify your First Name "
+     },
+     city: {
+     required: "Please specify your Last Name "
+     },
+     event_type: {
+     required: "Please specify your Salutation "
+     },
+     timeframe  : { required :'Please specify your Email Address', 
+     },
+     },errorClass: "error-tootip"
+     });
+     
+     });*/
+    function unselect_all_city() {
+        var fld = document.getElementById('city');
+        var values = [];
+        var $s = $(this);
+        for (var i = 0; i < fld.options.length; i++) {
+            if (fld.options[i].selected) {
+                if (fld.options[i].value == '-1') {
+                   $('#city option').not(':selected').attr('disabled','disabled');
+                   break;
+                } else {
+                }
+            }
+        }
+    }
+    
+    function unselect_all_event_type() {
+        var fld = document.getElementById('event_type');
+        var values = [];
+        var $s = $(this);
+        for (var i = 0; i < fld.options.length; i++) {
+            if (fld.options[i].selected) {
+                if (fld.options[i].value == '-1') {
+                   $('#event_type option').not(':selected').attr('disabled','disabled');
+                   break;
+                } else {
+                }
+            }
+        }
+    }
+    
+    function reset_mdd(){
+        //$('#city').prop('disabled',false);
+        $('#city option').prop('disabled', false);
+        $('#event_type option').prop('disabled', false);
+    }
+
+    /*$(document).ready(function(){
+     //$('#city').chosen({});
+     
+     $('#city').on('change', function(evt, params) {
+     var $s = $(this);
+     
+     if (params.selected && params.selected == "-1") 
+     {
+     // disable the select
+     $s.children('option').not(':selected').each(function(){
+     $(this).attr('disabled','disabled');
+     });
+     }
+     else if (params.deselected && params.deselected == "-1") 
+     {
+     // enable back
+     $s.children('option').each(function(){
+     $(this).removeAttr('disabled');
+     });
+     }
+     // force chosen update
+     $('#city').trigger('chosen:updated');
+     }); 
+     });*/
+</script>

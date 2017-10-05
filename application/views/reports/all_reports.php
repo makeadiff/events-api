@@ -15,8 +15,11 @@
                     <h3 class="panel-title">MAD App Reports</h3>
                 </div>
                 <div class="panel-body" style="min-height: 400px;">
-                    <div><a href="<?php echo base_url('reports/attendance-agregator-report'); ?>">View Attendance Agregator Report</a></div>
-                    <div><a href="<?php echo base_url('reports/event-attendance-report'); ?>">View Event Attendance Report</a></div>
+                    <div><a href="<?php echo base_url('attendance-agregator-report'); ?>">View Attendance Agregator Report</a></div>
+                    <div><a href="<?php echo base_url('volunteer-participation?user_id=110380'); ?>">View Volunteer Participation Report</a></div>
+                    <div><a href="<?php echo base_url('event-attendance-report'); ?>">View Event Attendance Report</a></div>
+                    <div><a href="<?php echo base_url('participation-tracker'); ?>">View Participation Tracker</a></div>
+                    <div><a href="<?php echo base_url('non-responsive-volunteer-report'); ?>">View Non Responsive volunteer Report</a></div>
                 </div>
             </div>
         </div>
@@ -24,8 +27,8 @@
 </div>
 </body>
 <style>
-body {
+    body{
     background: #36618c url(<?php echo base_url(); ?>images/mad_bg.png) no-repeat fixed center center;
-    background-size: 100%;
-}
-</style>
+   background-size: 100%;
+    }
+    </style>

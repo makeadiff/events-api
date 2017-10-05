@@ -15,7 +15,7 @@
             <div class="col-xs-12 col-sm-8 col-md-4 col-sm-offset-2 col-md-offset-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Event Attendance Report</h3>
+                        <h3 class="panel-title">Participation Tracker Report</h3>
                     </div>
                     <div class="panel-body">
                         <?php
@@ -26,23 +26,24 @@
                         ?>
 
                         <?php
-                        $attributes = array('id' => 'ea_reports', 'name' => 'ea_reports', 'autocomplete' => 'off', 'role' => 'form');
-                        echo form_open_multipart('event-attendance-report', $attributes);
+                        $attributes = array('id' => 'pt_reports', 'name' => 'pt_reports', 'autocomplete' => 'off', 'role' => 'form');
+                        echo form_open_multipart('participation-tracker', $attributes);
                         ?>
                         <div class="form-group">
                             <?php
-                            echo form_multiselect('city[]', $city_det_list, '', 'id ="city" onblur="get_center();" class="form-control input-sm"');
+                            echo form_dropdown('city', $city_det_list, '', 'id ="city" onblur="get_center();" class="form-control input-sm"');
                             ?>
                         </div>
                         <div class="form-group">
                             <?php
                             $center_det_list[''] = 'Choose Center';
-                            echo form_dropdown('center[]', $center_det_list, '', 'id ="center" class="form-control input-sm"');
+                            echo form_dropdown('center', $center_det_list, '', 'id ="center" class="form-control input-sm"');
                             ?>
                         </div>
-                        <div class="form-group">
+                       <div class="form-group">
                             <?php
-                            echo form_dropdown('event_type', $event_type_det_list, '', 'id ="event_type" class="form-control input-sm"');
+                            $aa_report_timeframe = $this->config->item('pt_report_timeframe');
+                            echo form_dropdown('timeframe', $aa_report_timeframe, '', 'id ="timeframe" class="form-control input-sm"');
                             ?>
                         </div>
                         <input type="submit" value="Generate CSV" class="btn btn-info btn-block" id="submit_btn">
@@ -104,9 +105,6 @@
                 success: function (response) {
                     var obj = JSON.parse(response);
                     if (obj.succ == 1) {
-                        $('#center').attr({
-                            'multiple': true,
-                        });
                         for (var field in obj.result) {
                             $('#center').append($('<option>', {
                                 value: field,

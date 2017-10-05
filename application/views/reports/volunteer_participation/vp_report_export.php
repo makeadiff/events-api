@@ -1,5 +1,5 @@
 <?php
-$filename = "Event-Attendance-Report";
+$filename = "Volunteer-Participation-Report";
 header("Cache-control: private");
 header('Content-Encoding: UTF-8');
 if($this->config->item('output_format') != 'html') {
@@ -15,31 +15,26 @@ if($this->config->item('output_format') != 'html') {
     <body>
         <table width="100%" align="left" border="0">
             <tr>
-                <td>Sl.No</td>
-                <td><b>Date</td>
-                <td><b>Event Name</td>
-                <td><b>City</td>
-                <td><b>Volunteer Name</td>
-                <td><b>Status</td>
+                <td><b>Sl.No</b></td>
+                <td><b>Name of Event</b> </td>
+                <td><b>Attendance Status</b></td>
+                <td><b>Date</b></td>
             </tr> 
             <?php
             $i = 1;
-            //print_r($leader);die;
             if (isset($report_details) && !empty($report_details)) {
                 $status_det = '';
                 foreach ($report_details as $row) {
-                    $event_date = $row->event_date;
                     $event_name = $row->event_name;
-                    $event_city = $row->city_name;
-                    $volunteer_name = $row->user_name;
+                    $event_date = $row->event_date;
                     $present = $row->present;
                     $late = $row->late;
                     $user_choice = $row->user_choice;
                     if ($present == ACTIVE && $late == INACTIVE) {
-                        $status_det = 'Attended';
+                        $status_det = 'Ontime';
                     } elseif ($present == ACTIVE && $late == ACTIVE) {
                         $status_det = 'Late';
-                    } elseif ($present == MISSED && $late == DEFAULT_STATUS) {
+                    }elseif ($present == MISSED && $late == DEFAULT_STATUS) {
                         $status_det = 'Missed';
                     }elseif ($present == INACTIVE && $late == INACTIVE) {
                         $status_det = 'Invited';
@@ -47,11 +42,9 @@ if($this->config->item('output_format') != 'html') {
                     ?> 
                     <tr>
                         <td> <?php echo $i; ?></td> 
-                        <td> <?php echo $event_date; ?></td>
-                        <td><?php echo $event_name; ?></td>
-                        <td><?php echo $event_city; ?></td>
-                        <td><?php echo $volunteer_name; ?></td>
+                        <td> <?php echo $event_name; ?></td>
                         <td><?php echo $status_det; ?></td>
+                        <td><?php echo $event_date; ?></td>
                     </tr>
                     <?php
                     $i++;

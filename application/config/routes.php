@@ -58,3 +58,6 @@ $route['translate_uri_dashes'] = TRUE;
 $route['mad-reports'] = 'reports/mad_reports';
 $route['attendance-agregator-report'] = 'reports/attendance_agregator_report';
 $route['event-attendance-report'] = 'reports/event_attendance_report';
+$route['volunteer-participation'] = 'reports/volunteer_participation_report';
+$route['participation-tracker'] = 'reports/participation_tracker_report';
+$route['non-responsive-volunteer-report'] = 'reports/non_responsive_volunteer_report';
