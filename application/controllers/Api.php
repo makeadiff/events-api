@@ -1063,13 +1063,15 @@ class Api extends CI_Controller {
 						
 						$check_user_event=$this->Api_model->count_detail('UserEvent', array('event_id' => $data['event_id'],'user_id'=>$value)); # Check user events 
 						if(isset($value) && !empty($value) && isset($check_user_event) && ($check_user_event == 0)){
-							$user_det = $this->Api_model->get_datum('User', 'id,name,email', array('id' => $value), TRUE, 'id asc');
+							$user_det = $this->Api_model->get_datum('User', 'id,name,email,mad_email', array('id' => $value), TRUE, 'id asc');
 							if(isset($user_det) && !empty($user_det)){
 								$data['name']=$user_det->name;
 								$data['email']=$user_det->email;
+								$data['mad_email']=$user_det->mad_email;
 							} else {
 								$data['name']='';
 								$data['email']='';
+								$data['mad_email']='';
 							}
 
 							$auth_key = random_string('alnum', 14);
@@ -1098,14 +1100,14 @@ class Api extends CI_Controller {
 							$subject = "Please join us";
 							$data['mail_gretting'] = "Dear ".$data['name'];
 							
-						   // $data['mail_content'] = "It is indeed a great pleasure to invite you for ".$event_det->name. " in ".$event_det->place. " on ".$event_date." ".$event_time."Please confirm your presence at the Event. <a href='".$url."' style='text-decoration: underline;color:#058676'><b>RSVP<b></a> Looking forward to meet you at the Event.";
 							$data['mail_content'] = "It is indeed a great pleasure to invite you for ".$event_det->name. " in ".$event_det->place. " on ".$event_date." ".$event_time." <br/>Please confirm your presence at the Event. <div style=\"text-align:center;padding:15px 0;\">
 		<a href='".$go_url."' style='display:inline-block;padding:7px 15px;background-color:#ED1849;color:#fff;border-radius:4px;-webkit-border-radius:4px;margin:0 5px;'>GOING</a><a href='".$may_go_url."' style='display:inline-block;padding:7px 15px;background-color:#ED1849;color:#fff;border-radius:4px;-webkit-border-radius:4px;margin:0 5px;'>MAYBE</a><a href='".$not_go_url."' style='display:inline-block;padding:7px 15px;background-color:#ED1849;color:#fff;border-radius:4px;-webkit-border-radius:4px;margin:0 5px;'>CAN’T GO</a>
 		</div> Looking forward to meet you at the Event.<br/>";
-								#$data['mail_content']='Test';
 
 							$content = $this->load->view('mail_template',$data,TRUE);
 							$this->mail->send_email($data['email'],$subject,$content);
+							if($data['mad_email']) $this->mail->send_email($data['mad_email'],$subject,$content);
+
 							$tracker_exist = $this->Api_model->get_datum('App_Event_Mail_Tracker', 'id', 
 												array('receive_id' => $value,'item_id'=>$data['event_id'],'type'=>TYPE_INVITE,'status'=>2), TRUE, 'id asc');
 							if (isset($tracker_exist) && empty($tracker_exist)) {
